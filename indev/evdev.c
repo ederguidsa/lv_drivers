@@ -7,6 +7,7 @@
  *      INCLUDES
  *********************/
 #include "evdev.h"
+#include "lvgl/lv_core/lv_group.h"
 #if USE_EVDEV != 0
 
 #include <stdio.h>
@@ -34,6 +35,7 @@ int evdev_fd;
 int evdev_root_x;
 int evdev_root_y;
 int evdev_button;
+int evdev_key;
 
 /**********************
  *      MACROS
@@ -129,6 +131,33 @@ bool evdev_read(lv_indev_data_t * data)
                 else if(in.value == 1)
                     evdev_button = LV_INDEV_STATE_PR;
             }
+            /* Arrow Keys of TRC-1222 */
+            else if(in.code == KEY_NUMERIC_2) {
+            	evdev_key = LV_GROUP_KEY_UP;
+                if(in.value == 0)
+                    evdev_button = LV_INDEV_STATE_REL;
+                else if(in.value == 1)
+                    evdev_button = LV_INDEV_STATE_PR;
+            } else if(in.code == KEY_NUMERIC_8) {
+            	evdev_key = LV_GROUP_KEY_DOWN;
+                if(in.value == 0)
+                    evdev_button = LV_INDEV_STATE_REL;
+                else if(in.value == 1)
+                    evdev_button = LV_INDEV_STATE_PR;
+            } else if(in.code == KEY_NUMERIC_6) {
+            	evdev_key = LV_GROUP_KEY_NEXT;
+                if(in.value == 0)
+                    evdev_button = LV_INDEV_STATE_REL;
+                else if(in.value == 1)
+                    evdev_button = LV_INDEV_STATE_PR;
+            } else if(in.code == KEY_NUMERIC_4) {
+            	evdev_key = LV_GROUP_KEY_PREV;
+                if(in.value == 0)
+                    evdev_button = LV_INDEV_STATE_REL;
+                else if(in.value == 1)
+                    evdev_button = LV_INDEV_STATE_PR;
+            }
+
         }
     }
 
@@ -148,6 +177,7 @@ bool evdev_read(lv_indev_data_t * data)
 #endif
 
     data->state = evdev_button;
+    data->key = evdev_key;
 
     if(data->point.x < 0)
       data->point.x = 0;
